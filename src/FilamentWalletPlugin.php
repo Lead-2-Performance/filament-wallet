@@ -7,7 +7,6 @@ use Filament\Panel;
 use TomatoPHP\FilamentAccounts\Facades\FilamentAccounts;
 use TomatoPHP\FilamentWallet\Filament\Actions\WalletAction;
 use TomatoPHP\FilamentWallet\Filament\Resources\TransactionResource;
-use TomatoPHP\FilamentWallet\Filament\Resources\TransferResource;
 use TomatoPHP\FilamentWallet\Filament\Resources\WalletResource;
 
 class FilamentWalletPlugin implements Plugin
@@ -24,7 +23,7 @@ class FilamentWalletPlugin implements Plugin
     {
         $resources = [];
 
-        if(!$this->hideResources){
+        if (!$this->hideResources) {
             $resources = [
                 TransactionResource::class,
                 WalletResource::class
@@ -48,8 +47,8 @@ class FilamentWalletPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
-        if($this->useAccounts){
-            FilamentAccounts::registerAccountActions([
+        if ($this->useAccounts) {
+            FilamentAccounts::make()->registerAccountActions([
                 WalletAction::make('wallet')
             ]);
         }

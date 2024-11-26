@@ -3,24 +3,24 @@
 namespace TomatoPHP\FilamentWallet\Filament\Resources;
 
 use TomatoPHP\FilamentWallet\Filament\Resources\TransactionResource\Pages;
-use TomatoPHP\FilamentWallet\Filament\Resources\TransactionResource\RelationManagers;
-use TomatoPHP\FilamentWallet\Models\Transaction;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
+use Tomatophp\FilamentWallet\Services\Helper;
 
 class TransactionResource extends Resource
 {
-    protected static ?string $model = Transaction::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?int $navigationSort = 3;
 
+    public static function getModel(): string
+    {
+        return Helper::loadTransactionModelClass();
+    }
 
     public static function getNavigationGroup(): ?string
     {
@@ -66,12 +66,12 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->label(trans('filament-wallet::messages.transactions.columns.type'))
                     ->badge()
-                    ->color(fn (Transaction $transaction) => $transaction->type === 'deposit' ? 'success' : 'danger'),
+                    ->color(fn(Model $transaction) => $transaction->type === 'deposit' ? 'success' : 'danger'),
                 Tables\Columns\TextColumn::make('amount')
                     ->label(trans('filament-wallet::messages.transactions.columns.amount'))
-                    ->formatStateUsing(fn (Transaction $transaction) => (int) $transaction->amount / 100)
+                    ->formatStateUsing(fn(Model $transaction) => (int) $transaction->amount / 100)
                     ->badge()
-                    ->color(fn (Transaction $transaction) => $transaction->amount > 0 ? 'success' : 'danger')
+                    ->color(fn(Model $transaction) => $transaction->amount > 0 ? 'success' : 'danger')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('confirmed')
                     ->label(trans('filament-wallet::messages.transactions.columns.confirmed'))
@@ -86,10 +86,10 @@ class TransactionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters(filament('filament-wallet')->useAccounts ? [
-               Tables\Filters\SelectFilter::make('payable_id')
-                   ->label(trans('filament-wallet::messages.transactions.filters.accounts'))
+                Tables\Filters\SelectFilter::make('payable_id')
+                    ->label(trans('filament-wallet::messages.transactions.filters.accounts'))
                     ->searchable()
-                    ->options(fn () => config('filament-accounts.model')::query()->pluck('name', 'id')->toArray())
+                    ->options(fn() => config('filament-accounts.model')::query()->pluck('name', 'id')->toArray())
             ] : [])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
