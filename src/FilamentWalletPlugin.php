@@ -48,7 +48,7 @@ class FilamentWalletPlugin implements Plugin
     public function boot(Panel $panel): void
     {
         if ($this->useAccounts) {
-            FilamentAccounts::make()->registerAccountActions([
+            FilamentAccounts::registerAccountActions([
                 WalletAction::make('wallet')
             ]);
         }
